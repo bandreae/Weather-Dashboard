@@ -16,24 +16,46 @@
 // WHEN I click on a city in the search history
 // THEN I am again presented with current and future conditions for that city
 // WHEN I open the weather dashboard
-// THEN I am presented with the last searched city forecast 
+// THEN I am presented with the last searched city forecast
 // 1) Search for a city
 // 2) Return current conditions
 // 3) Return UV index with color coded rules
 // 4) Return 5 day forcast
 // 5) Save recent searches in local storage -->
 
-var apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=austin&appid=855d76da096afb4f6b03794b5572ca06'
+var CityApi = document.querySelector("#search");
+var searchBtn = document.querySelector("#btnsearch");
 
-fetch(apiUrl)
-.then(function (response) {
-    //Turn response to json format
-      response.json()
-.then(function (data) {
-    //console.log the final data
-        console.log(data);
-        console.log(data.main.temp);
-      });
-  });
+function currentWeatherApi(event) {
+  event.preventDefault();
+  fetch(
+    "https://api.openweathermap.org/data/2.5/weather?q=" +
+      CityApi.value +
+      "&units=imperial&appid=855d76da096afb4f6b03794b5572ca06"
+  )
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      var temperature = document.querySelector(".temperature");
+      var humidity = document.querySelector(".humidity");
+      var wind = document.querySelector(".wind");
+      var cityName = document.querySelector(".city");
+      var lat = data.coord.lat;
+      var lon = data.coord.lon;
+      var dateForToday = new Date(data.dt * 1000).toLocaleDateString("en-US");
 
-  
+      console.log(data);
+      console.log(data.main.temp);
+      weatherIconEl.src =
+        "https://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png";
+      weatherIconEl.style = "width: 45px; height: 45px; display: inline-block;";
+      cityName.textContent = data.name + " " + dateForToday;
+
+      temperature.textContent = "Temperature: " + data.main.temperature + "°F";
+      humidity.textContent = "Humidity: " + data.main.humidity + "%";
+      wind.textContent = "Wind Speed: " + data.wind.speed + " MPH";
+
+      localStorage.setItem("SearchedCity", CityApi.value);
+    });
+}
