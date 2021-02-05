@@ -1,6 +1,6 @@
 # Weather Dashboard
 
-This simple weather application allows a user to search for current and future weather based on cities. [The application can be viewed here](https://bandreae.github.io/Day-Scheduler/).
+This simple weather application allows a user to search for current and future weather based on cities. [The application can be viewed here](https://bandreae.github.io/Weather-Dashboard/).
 
 ## User Story
 AS A traveler
