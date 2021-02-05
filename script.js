@@ -35,3 +35,5 @@ fetch(apiUrl)
         console.log(data.main.temp);
       });
   });
+
+  
