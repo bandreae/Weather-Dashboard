@@ -26,7 +26,10 @@
 console.log("hello world!");
 
 var CityApi = document.querySelector("#search");
-var searchBtn = document.querySelector("#btnsearch");
+var Btnsearch = document.querySelector("#btnsearch");
+var pastCity = "";
+var iconEl; 
+
 
 function currentWeatherApi(event) {
   event.preventDefault();
@@ -44,6 +47,9 @@ function currentWeatherApi(event) {
       var wind = document.querySelector(".wind");
       var cityName = document.querySelector(".city");
       var dateForToday = new Date(data.dt * 1000).toLocaleDateString("en-US");
+      var lat = data.coord.lat;
+      var lon = data.coord.lon;
+
 
       console.log(data);
       console.log(data.main.temp);
@@ -58,4 +64,32 @@ function currentWeatherApi(event) {
 
       localStorage.setItem("SearchedCity", CityApi.value);
     });
+}
+
+function fiveDayForecast(lat, lon) {
+  fetch("https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly,current,alerts&units=imperial&appid=73764a83501606e04b74a8e0281a654b")
+      .then(function (response) {
+          console.log(response);
+          return response.json();
+      })
+      .then(function (data) {
+          for (i = 1; i < 6; i++) {
+              var imgIcon = document.createElement("img")
+              var Icon = document.getElementById(i);
+
+              var newDate = new Date(data.daily[i].dt*1000).toLocaleDateString("en-US");
+              console.log(newDate);
+              Icon.textContent = newDate;
+
+              imgIcon.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png");
+              imgIcon.style = "width: 45px; height: 45px; display: inline-block;"
+              Icon.append(imgIcon);
+
+              var weatherDiv = document.createElement("div");
+              weatherDiv.innerHTML = "Temp: " + data.daily[i].temp.day + "°F" + " " + "Humidity: " + data.daily[i].humidity + "%";
+              Icon.append(weatherDiv);
+          }
+          document.querySelector(".forecast").hidden = false;
+          document.querySelector(".card-group").hidden = false;
+      });
 }
