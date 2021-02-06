@@ -23,6 +23,8 @@
 // 4) Return 5 day forcast
 // 5) Save recent searches in local storage -->
 
+console.log("hello world!");
+
 var CityApi = document.querySelector("#search");
 var searchBtn = document.querySelector("#btnsearch");
 
@@ -41,8 +43,6 @@ function currentWeatherApi(event) {
       var humidity = document.querySelector(".humidity");
       var wind = document.querySelector(".wind");
       var cityName = document.querySelector(".city");
-      var lat = data.coord.lat;
-      var lon = data.coord.lon;
       var dateForToday = new Date(data.dt * 1000).toLocaleDateString("en-US");
 
       console.log(data);
