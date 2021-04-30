@@ -31,7 +31,7 @@ var currentDiv = document.querySelector("#current-weather-forecast")
 var forecastDiv = document.querySelector("#forecast-container")
 var pastCity = "";
 var iconEl; 
-
+var searchedCityyArr = []
 
 function currentWeatherApi(event) {
   event.preventDefault();
@@ -70,7 +70,6 @@ currentDiv.innerHTML =
 <div> Temperature: ${data.main.temp}</div>
 <div id="humidity"></div>
 <div id="wind"></div>
-<div id="UVindex"></div>
 `
 
       
@@ -83,8 +82,8 @@ currentDiv.innerHTML =
      // temperature.textContent = "Temperature: " + data.main.temperature + "°F";
      // humidity.textContent = "Humidity: " + data.main.humidity + "%";
       //wind.textContent = "Wind Speed: " + data.wind.speed + " MPH";
-
-      localStorage.setItem("SearchedCity", cityApi.value);
+ searchedCityyArr.push(cityApi.value)
+      localStorage.setItem("SearchedCity", JSON.stringify(searchedCityyArr));
     fiveDayForecast(data.coord.lat, data.coord.lon) 
 
     });
@@ -126,9 +125,47 @@ function fiveDayForecast(lat, lon) {
 
               //Icon.append(weatherDiv);
           }
+
+          //Because uv index data only exist within the onecall API
+          //So we need to write the codes for Uv index colors inside this function
+
+          //create a div to contain uv index data
+          var uvIndex = document.createElement("div")
+          var currentUvIndex = data.daily[0].uvi;
+          uvIndex.innerHTML = 
+          `
+            <div >UV Index: 
+            <span id="uvIndex">${currentUvIndex}</span>
+            </div>
+
+          `
+          //append the uv index data to the current weather forecast div
+          currentDiv.appendChild(uvIndex)
+
+          //change background colors depending on if the weather is favorable, moderate, high, very high, or extreme
+          if (currentUvIndex <= 2){
+            document.querySelector("#uvIndex").style.backgroundColor ="green"
+          } else if (currentUvIndex > 2 && currentUvIndex <= 5 ){
+            document.querySelector("#uvIndex").style.backgroundColor ="yellow"
+          } else if (currentUvIndex > 5 && currentUvIndex <= 7 ){
+            document.querySelector("#uvIndex").style.backgroundColor ="orange"
+          } else if (currentUvIndex > 7 && currentUvIndex <= 10 ){
+            document.querySelector("#uvIndex").style.backgroundColor ="red"
+          } else {
+            document.querySelector("#uvIndex").style.backgroundColor ="purple"
+          }
+          
           //document.querySelector(".forecast").hidden = false;
           //document.querySelector(".card-group").hidden = false;
       });
 }
+
+//If found a SearchedCity in local storage, return it
+//otherwise, return an empty array
+var getSearchedCity = JSON.parse(localStorage.getItem("SearchedCity")) || [];
+
+console.log(getSearchedCity)
+
+//Loop through getSearchedCity and display each city inside the recent city search list
 
 btnSearch.addEventListener("click", currentWeatherApi )
